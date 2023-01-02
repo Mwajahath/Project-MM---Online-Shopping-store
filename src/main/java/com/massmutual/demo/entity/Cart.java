@@ -29,9 +29,9 @@ public class Cart {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private  int cartId;
 	
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "productId")
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
-	private List<Product> products=new ArrayList<>();
+	private List<Product> products;
 	
 	@OneToOne
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})

@@ -8,6 +8,7 @@ import com.massmutual.demo.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,11 +33,11 @@ public class CategoryController {
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
-	@PostMapping("/save") //, produces = "application/json", consumes = "application/json", method = RequestMethod.POST)
-	public ResponseEntity<Category> saveCategory(@RequestBody Category category) {
+	@PostMapping("/save")
+	public ResponseEntity<Category> saveCategory(@RequestBody Category category) throws AccessDeniedException {
 		Category saved = null;
 		saved = service.addCategory(category);
-		return new ResponseEntity<Category>(saved, HttpStatus.OK);
+		return new ResponseEntity<Category>(saved, HttpStatus.CREATED);
 	}
 
 	@GetMapping("/get/all")
@@ -47,7 +48,7 @@ public class CategoryController {
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("/delete/{categoryId}")
-	public ResponseEntity<Category> deleteCategoryById(@PathVariable("categoryId")Integer categoryId) {
+	public ResponseEntity<Category> deleteCategoryById(@PathVariable("categoryId")Integer categoryId) throws AccessDeniedException {
 		Category category = service.removeCategoryById(categoryId);
 		if(category==null) {
 			return new ResponseEntity("Sorry! Products are not available!",HttpStatus.NOT_FOUND);
@@ -58,8 +59,8 @@ public class CategoryController {
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PutMapping("/update")
-	public ResponseEntity<Category> updateCategory(
-			@RequestBody Category category){
+	public ResponseEntity<Category> updateCategory (
+			@RequestBody Category category) throws AccessDeniedException{
 		Category categories= service.updateCategory(category);
 		
 		return new ResponseEntity<Category>(categories, HttpStatus.OK);

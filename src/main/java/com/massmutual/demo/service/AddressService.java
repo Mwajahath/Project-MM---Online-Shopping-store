@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import com.massmutual.demo.entity.Address;
 import com.massmutual.demo.exceptions.AddressNotFoundException;
-import com.massmutual.demo.exceptions.NoRecordFoundException;
 
 
 public interface AddressService {
@@ -16,8 +15,7 @@ public interface AddressService {
 
 	Optional<Address> fetchAddressById(Long addressID);
 
-
-	int deleteAddressById(Long addressID) throws AddressNotFoundException;
+	String deleteAddressById(Long addressID) ;
 
 	Address updateAddress(Long addressID, Address address);
 

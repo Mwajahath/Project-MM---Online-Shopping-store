@@ -17,6 +17,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -35,7 +37,7 @@ public class Order {
 	private Long orderID;
 	
 	@Column(name="order_date")
-	private String orderDate;
+	private LocalDate orderDate;
 	
 	@Column(name="order_status")
 	private String orderStatus;

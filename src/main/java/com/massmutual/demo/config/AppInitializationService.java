@@ -65,7 +65,6 @@ public class AppInitializationService implements ApplicationListener<Application
         request1.setAddress(address1);
         registerService.addUser(request1);
 
-
     }
 
     public boolean shouldInitialize() {

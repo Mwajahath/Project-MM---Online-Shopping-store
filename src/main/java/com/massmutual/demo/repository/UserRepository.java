@@ -1,6 +1,7 @@
 package com.massmutual.demo.repository;
 
 import com.massmutual.demo.entity.User;
+import com.massmutual.demo.enums.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,9 +17,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
     User findByEmail(String email);
     User findByPhoneNumber(String phoneNumber);
 
-    List<User> findAllByRoles(String role);
-
-    User findByNameAndRoles(String name,String role);
+    User findByName(String name);
 
     @Query(value = "select * from `sprint`.`user` where user_id=:userID",nativeQuery = true)
     User findByUser_id(@Param("userID") long userId);

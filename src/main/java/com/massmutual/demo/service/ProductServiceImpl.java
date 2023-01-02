@@ -6,6 +6,7 @@ import javax.transaction.Transactional;
 
 import com.massmutual.demo.entity.Category;
 import com.massmutual.demo.entity.Product;
+import com.massmutual.demo.exceptions.AppException;
 import com.massmutual.demo.repository.CategoryRepository;
 import com.massmutual.demo.repository.ProductRepository;
 
@@ -20,14 +21,17 @@ public class ProductServiceImpl implements ProductService {
 	
 	@Autowired
 	CategoryRepository categoryRepository;
-	
-	
+
 	@Override
 	@Transactional
 	public Product addProduct(Product product) {
-		Category category=categoryRepository.findById(product.getCategory().getCatId()).get();
-		product.setCategory(category);
-		return repository.save(product);
+		try {
+			Category category = categoryRepository.findById(product.getCategory().getCatId()).get();
+			product.setCategory(category);
+			return repository.save(product);
+		}catch (NullPointerException e){
+			throw new AppException(e.getMessage());
+		}
 	}
 
 	@Override
@@ -43,16 +47,18 @@ public class ProductServiceImpl implements ProductService {
 
 	@Transactional
 	@Override
-	public Product removeProductById(Integer productId) {
-		Product exists = repository.findById(productId).get();
-		Product resultProduct=null;
-		if(exists != null) {
-			//repository.deleteById(productId);
-			exists.setStatus("inactive");
-			resultProduct=exists;
-			repository.save(resultProduct);
-		}
-		return resultProduct;
+	public Product removeProductById(Integer productId)  {
+
+			Product exists = repository.findById(productId).get();
+			Product resultProduct = null;
+			if (exists != null) {
+				//repository.deleteById(productId);
+				exists.setStatus("inactive");
+				resultProduct = exists;
+				repository.save(resultProduct);
+			}
+			return resultProduct;
+
 	}
 
 	@Override

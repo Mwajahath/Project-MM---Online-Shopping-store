@@ -3,11 +3,13 @@ package com.massmutual.demo.controller;
 import java.util.List;
 
 import com.massmutual.demo.entity.Product;
+import com.massmutual.demo.exceptions.AppException;
 import com.massmutual.demo.service.ProductService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
-
 @RequestMapping("/product")
 @RestController
 public class ProductController {
@@ -28,12 +28,9 @@ public class ProductController {
 	private ProductService service;
 
 	@PreAuthorize("hasAuthority('ADMIN')")
-	@PostMapping("/save") //, produces = "application/json", consumes = "application/json", method = RequestMethod.POST)
-	public ResponseEntity<Product> saveProduct(@RequestBody Product product) {
-		
-		Product saved = null;
-		//product.setCategory(category);
-		saved = service.addProduct(product);
+	@PostMapping("/save")
+	public ResponseEntity<Product> saveProduct(@RequestBody Product product) throws AccessDeniedException {
+		Product saved = service.addProduct(product);
 		return new ResponseEntity<Product>(saved, HttpStatus.OK);
 	}
 
@@ -51,19 +48,17 @@ public class ProductController {
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("/delete/{productId}")
-	public ResponseEntity<Product> deleteProductById(@PathVariable("productId")Integer productId) {
+	public ResponseEntity<Product> deleteProductById(@PathVariable("productId")Integer productId) throws AccessDeniedException, AppException {
 		Product product= service.removeProductById(productId);
 		if(product==null) {
 			return new ResponseEntity("Sorry! Products are not available!",HttpStatus.NOT_FOUND);
 		}
-	
 		return new ResponseEntity<Product>(product, HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PutMapping("/update")
-	public ResponseEntity<Product> updateProduct(
-			@RequestBody Product product){
+	public ResponseEntity<Product> updateProduct(@RequestBody Product product) throws AccessDeniedException {
 		Product products= service.updateProduct(product);
 		
 		return new ResponseEntity<Product>(products, HttpStatus.OK);
@@ -71,7 +66,7 @@ public class ProductController {
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("/get/category/{cname}")
-	ResponseEntity<List<Product>> getProffessorCourse(@PathVariable("cname") String cname){
+	ResponseEntity<List<Product>> getProffessorCourse(@PathVariable("cname") String cname) throws AccessDeniedException{
 		List<Product> rtnObj = service.viewProductsByCategory(cname);
 		
 		return new ResponseEntity<List<Product>>(rtnObj, HttpStatus.OK);

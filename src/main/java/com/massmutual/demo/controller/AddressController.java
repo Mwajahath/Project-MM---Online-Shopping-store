@@ -10,6 +10,7 @@ import com.massmutual.demo.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,39 +28,30 @@ public class AddressController {
 	@Autowired
 	private AddressService service;
 
-	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping("/save")
-	public Address saveAddress(@RequestBody Address address) {
-		return service.saveAddress(address);
+	public ResponseEntity<Address> saveAddress(@RequestBody Address address) throws AppException {
+		return new ResponseEntity<>(service.saveAddress(address),HttpStatus.CREATED);
 	}
-
 
 	@GetMapping("/get")
 	@PreAuthorize("hasAuthority('ADMIN')")
-	public List<Address> fetchCustomerList() throws AppException {
-		try{return service.fetchAddressList();}
-		catch (AppException e){
-			throw new AppException("Some error occurred");
-		}
+	public ResponseEntity<List<Address>> fetchAddressList() throws AppException, AccessDeniedException {
+		return new ResponseEntity<>( service.fetchAddressList(),HttpStatus.OK);
 	}
 	
 	@GetMapping("/get/{addressID}")
 	public ResponseEntity<Address> fetchAddressById(@PathVariable("addressID") Long addressID) throws NoRecordFoundException {
-
 		return new ResponseEntity(service.fetchAddressById(addressID),HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("/delete/{addressID}")
-	public int deleteAddressById(@PathVariable("addressID")Long addressID) throws AddressNotFoundException{
-
+	public String deleteAddressById(@PathVariable("addressID")Long addressID) throws AddressNotFoundException, AppException {
 			return service.deleteAddressById(addressID);
 	}
 
-	@PreAuthorize("hasAuthority('ADMIN')")
 	@PutMapping("/update/{addressID}")
-	public Address updateAddress(@PathVariable("addressID") Long addressID, @RequestBody Address address) throws AddressNotFoundException {
-		return service.updateAddress(addressID, address);
+	public ResponseEntity<Address> updateAddress(@PathVariable("addressID") Long addressID, @RequestBody Address address) throws AppException, AccessDeniedException{
+		return new ResponseEntity<>(service.updateAddress(addressID, address),HttpStatus.OK);
 	}
 
 }

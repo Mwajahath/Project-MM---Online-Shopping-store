@@ -1,6 +1,7 @@
 package com.massmutual.demo.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.massmutual.demo.entity.Cart;
 import com.massmutual.demo.entity.Product;
@@ -19,6 +20,9 @@ public class CartServiceImpl implements CartService{
 	
 	@Autowired
 	ProductRepository productRepository;
+
+	@Autowired
+	ProductService productService;
 
 	@Autowired
 	UserService userService;
@@ -44,7 +48,7 @@ public class CartServiceImpl implements CartService{
 	
 	@Override
 	public Cart updateProductQuantity(int cartId,int pid,int quantity) {
-		Cart cart1 =cartRepository.findById(cartId).get();
+		Cart cart1 = (Cart) cartRepository.findById(cartId);
 		Product exists=productRepository.getProductById(pid);
 		if(exists==null) {
 			System.out.println("Product is not available");
@@ -77,8 +81,9 @@ public class CartServiceImpl implements CartService{
 //	}
 
 	@Override
-	public List<Product> viewAllProducts(Cart cart) {
-		return cart.getProducts();
+	public Cart viewAllProducts(int cartId) {
+//		return cartRepository.findById(userId);
+		return (Cart) cartRepository.findById(cartId);
 
 	}
 
@@ -94,9 +99,15 @@ public class CartServiceImpl implements CartService{
 
 	@Override
 	public Cart saveCart(Cart cart) {
-		return null;
-	}
 
+		List<Product> products = cart.getProducts().stream().map(product ->
+			productService.viewProduct(product.getProductId())).collect(Collectors.toList());
+		User user = userService.fetchCustomerById( cart.getCustomer().getUser_id());
+		Cart cart1 = new Cart();
+		cart1.setProducts(products);
+		cart1.setCustomer(user);
+		return cartRepository.save(cart1);
+	}
 
 	@Override
 	public Cart removeAllProducts(Cart cart) {

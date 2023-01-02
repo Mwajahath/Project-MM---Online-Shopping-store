@@ -1,16 +1,16 @@
 package com.massmutual.demo.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
+import com.massmutual.demo.entity.Address;
 import com.massmutual.demo.entity.Order;
 import com.massmutual.demo.entity.Product;
 import com.massmutual.demo.entity.User;
-import com.massmutual.demo.repository.AddressRepository;
 import com.massmutual.demo.repository.OrderRepository;
-import com.massmutual.demo.repository.ProductRepository;
 
-import com.massmutual.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,13 +22,13 @@ public class OrderServiceImpl implements OrderService {
 	OrderRepository repository;
 	
 	@Autowired
-	ProductRepository productrepo;
+	ProductService productService;
 	
 	@Autowired
-	UserRepository customerrepo;
+	UserService userService;
 	
 	@Autowired
-	AddressRepository addressrepo;
+	AddressService addressService;
 	
 //	@Override
 //	public Order addOrder(Order order) {
@@ -53,7 +53,23 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public Order addOrder(Order order) {
-		return null;
+
+		Optional<Address> address = addressService.fetchAddressById(order.getAddress().getAddressID());
+
+		User user = userService.fetchCustomerById(order.getCustomer().getUser_id());
+
+		Product product = productService.viewProduct(order.getProduct().getProductId());
+
+		Order order1 = new Order();
+		order1.setOrderDate(LocalDate.now());
+		order1.setAddress(address.get());
+		order1.setProduct(product);
+		order1.setCustomer(user);
+		order1.setOrderStatus("Accepted");
+
+		return repository.save(order1);
+
+
 	}
 
 	@Override

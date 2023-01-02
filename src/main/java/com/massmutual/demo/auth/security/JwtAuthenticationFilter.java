@@ -74,4 +74,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     boolean isSecurityContextAuthenticationNotPresent(String username) {
         return username != null && SecurityContextHolder.getContext().getAuthentication() == null;
     }
+
 }

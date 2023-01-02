@@ -30,20 +30,18 @@ public class CartController {
 	public ResponseEntity<Cart> addingProductToCart(@PathVariable("cartId") Integer cartId, @RequestBody Product product) {
 		Cart cart= service.addProductTocart(cartId, product);
 		return new ResponseEntity<Cart>(cart, HttpStatus.OK);
-		
 	}
 	
 	@PostMapping("/save")
 	public ResponseEntity<Cart> createCart(@RequestBody Cart cart){
-		Cart savedCart=null;
-		savedCart= service.saveCart(cart);
-		return new ResponseEntity<Cart>(savedCart, HttpStatus.OK);
+		Cart savedCart = service.saveCart(cart);
+		return new ResponseEntity<Cart>(savedCart, HttpStatus.CREATED);
 	}
 	
-	@GetMapping("/get")
-	public ResponseEntity<List<Product>> viewAllProductsInCart(@RequestBody Cart cart){
-		List<Product> products=service.viewAllProducts(cart);
-		return new ResponseEntity<List<Product>>(products,HttpStatus.OK);
+	@GetMapping("/get/{cartId}")
+	public ResponseEntity<Cart> viewAllProductsInCart(@PathVariable("cartId") int cartId){
+		Cart cart=service.viewAllProducts(cartId);
+		return new ResponseEntity<>(cart, HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/delete/{cartId}/{pid}")

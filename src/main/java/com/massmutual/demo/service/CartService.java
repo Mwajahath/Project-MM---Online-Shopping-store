@@ -13,7 +13,7 @@ public interface CartService {
 
 	Cart saveCart(Cart cart);
 
-	List<Product> viewAllProducts(Cart cart);
+	Cart viewAllProducts(int cartId);
 
 	Cart removeAllProducts(Cart cart);
 

@@ -5,6 +5,7 @@ import com.massmutual.demo.entity.Role;
 import com.massmutual.demo.entity.User;
 import com.massmutual.demo.enums.UserRole;
 import com.massmutual.demo.exceptions.AppException;
+import com.massmutual.demo.exceptions.NoRecordFoundException;
 import com.massmutual.demo.register.RegisterRequest;
 import com.massmutual.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,12 +107,21 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public List<User> fetchCustomerList() {
-        return userRepository.findAllByRoles("User");
+        return userRepository.findAll();
     }
 
     @Override
     public User fetchCustomerById(Long userId) {
-        return userRepository.findByUser_id(userId);
+
+        try{
+            User user = userRepository.findByUser_id(userId);
+            if (!user.equals(null))
+                return user;
+        } catch (NullPointerException e){
+            throw new AppException("No record found with id: "+userId);
+
+        }
+        return null;
     }
 
     @Override
@@ -125,29 +135,39 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User updateCustomer(Long customerID, User customer) {
-        User cust = userRepository.findById(customerID).get();
-        if(cust.getStatus().equalsIgnoreCase("active")) {
-            if(Objects.nonNull(customer.getName()) && !"".equalsIgnoreCase(customer.getName())) {
-                cust.setName(customer.getName());
 
-            }
-            if(Objects.nonNull(customer.getPhoneNumber()) && !"".equalsIgnoreCase(customer.getPhoneNumber())) {
-                cust.setPhoneNumber(customer.getPhoneNumber());
+            User cust = userRepository.findById(customerID).get();
+            if (cust.getStatus().equalsIgnoreCase("active")) {
+                if (Objects.nonNull(customer.getName()) && !"".equalsIgnoreCase(customer.getName())) {
+                    cust.setName(customer.getName());
 
-            }
-            if(Objects.nonNull(customer.getEmail()) && !"".equalsIgnoreCase(customer.getEmail())) {
-                cust.setEmail(customer.getEmail());
+                }
+                if (Objects.nonNull(customer.getPhoneNumber()) && !"".equalsIgnoreCase(customer.getPhoneNumber())) {
+                    cust.setPhoneNumber(customer.getPhoneNumber());
 
+                }
+                if (Objects.nonNull(customer.getEmail()) && !"".equalsIgnoreCase(customer.getEmail())) {
+                    cust.setEmail(customer.getEmail());
+
+                }
+            } else {
+                System.out.println("Since the customer is inactive, Customer details will not get updated");
             }
-        }else {
-            System.out.println("Since the customer is inactive, Customer details will not get updated");
-        }
-        return userRepository.save(cust);
+            return userRepository.save(cust);
+
     }
 
     @Override
     public User fetchCustomerByName(String name) {
-        return userRepository.findByNameAndRoles(name,"User");
+        try{
+             User user =userRepository.findByName(name);
+             if(!user.equals(null))
+                 return user;
+        }catch (NullPointerException e){
+            throw new NoRecordFoundException("No record found with name: "+name);
+        }
+        return null;
+
     }
 
 

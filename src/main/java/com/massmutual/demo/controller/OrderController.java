@@ -8,6 +8,7 @@ import com.massmutual.demo.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,22 +34,20 @@ public class OrderController {
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("/get/all")
-	public ResponseEntity<List<Order>> getAllOrders() {
+	public ResponseEntity<List<Order>> getAllOrders() throws AccessDeniedException {
 		List<Order> orderList = service.viewAllOrders();
 		return new ResponseEntity<List<Order>>(orderList, HttpStatus.OK);
 	}
 		
 	
 	@GetMapping("/get/location/{pincode}")
-	public Order getOrderByLocation(@PathVariable("pincode") String pincode)
-	{
-		return service.getOrderByLocation(pincode);
+	public ResponseEntity<Order> getOrderByLocation(@PathVariable("pincode") String pincode) {
+		return new ResponseEntity<>(service.getOrderByLocation(pincode),HttpStatus.OK);
 	}
 
 	@PutMapping("/update/{orderID}")
-	public Order updateOrder(@PathVariable("orderID")Long orderID, @RequestBody Order order)
-	{
-		return service.updateOrder(orderID, order);
+	public ResponseEntity<Order> updateOrder(@PathVariable("orderID")Long orderID, @RequestBody Order order) {
+		return new ResponseEntity<>(service.updateOrder(orderID, order),HttpStatus.OK);
 	}
 	  
 	
@@ -60,12 +59,9 @@ public class OrderController {
 
 	@PostMapping("/save")
 	public ResponseEntity<Order> saveOrder(@RequestBody Order order) {
-
-		Order saved = null;
-		saved = service.addOrder(order);
-		return new ResponseEntity<Order>(saved, HttpStatus.OK);
+		Order saved = service.addOrder(order);
+		return new ResponseEntity<Order>(saved, HttpStatus.CREATED);
 	}
-
 
 	@DeleteMapping("/delete/{orderId}")
 	public ResponseEntity<Order> deleteOrderById(@PathVariable("orderId") Long orderID) {
@@ -73,10 +69,7 @@ public class OrderController {
 		if(order==null) {
 			return new ResponseEntity("Sorry! Orders are not available!",HttpStatus.NOT_FOUND);
 		}
-
 		return new ResponseEntity<Order>(order, HttpStatus.OK);
 	}
-
-
 
 }
