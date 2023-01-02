@@ -39,7 +39,6 @@ public class AddressServiceImpl implements AddressService{
 		Optional<Address> address  = repository.findById(addressID);
 		address.orElseThrow(()->new NoRecordFoundException("No record found with id : "+addressID));
 		return address;
-
 	}
 
 	@Override
@@ -62,7 +61,6 @@ public class AddressServiceImpl implements AddressService{
 	}
 
 	@Override
-	@Transactional
 	public Address updateAddress(Long addressID, Address address) {
 	
 		Address add = repository.findById(addressID).get();
@@ -90,11 +88,8 @@ public class AddressServiceImpl implements AddressService{
 			add.setPincode(address.getPincode());
 		}
 
-		try {
-			return repository.save(add);
-		}catch (AppException e){
-			throw new AppException(e.getMessage(),e.getCause());
-		}
+		return repository.save(add);
+
 	}
 
 }

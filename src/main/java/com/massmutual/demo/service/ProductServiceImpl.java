@@ -49,6 +49,8 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public Product removeProductById(Integer productId)  {
 
+		try {
+
 			Product exists = repository.findById(productId).get();
 			Product resultProduct = null;
 			if (exists != null) {
@@ -58,6 +60,9 @@ public class ProductServiceImpl implements ProductService {
 				repository.save(resultProduct);
 			}
 			return resultProduct;
+		}catch (NullPointerException e){
+			throw new AppException("Product is not present in database");
+		}
 
 	}
 

@@ -66,19 +66,7 @@ public class CartServiceImpl implements CartService{
 		}
 		return null;
 	}
-//
-//	@Override
-//	public Cart saveCart(Cart cart) {
-//		User customer=userService.fetchCustomerById(cart.);
-//		if(customer==null) {
-//			System.out.println("Customer is not active");
-//		}
-//		else {
-//			cart.setCustomer(customer);
-//			return cartRepository.save(cart);
-//		}
-//		return null;
-//	}
+
 
 	@Override
 	public Cart viewAllProducts(int cartId) {
