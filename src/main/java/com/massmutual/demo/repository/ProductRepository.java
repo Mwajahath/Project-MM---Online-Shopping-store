@@ -14,7 +14,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
 	List<Product> findByCategoryCategoryName(String cname);
 	
-	@Query(value = "SELECT * FROM products ld WHERE ld.product_id=:pid AND ld.product_status = 'active'",
+	@Query(value = "SELECT * FROM `sprint`.`products` ld WHERE ld.product_id=:pid AND ld.product_status = 'active'",
 			nativeQuery = true)
 	Product getProductById(@Param("pid") Integer pid);
 	
